@@ -16,6 +16,7 @@ import { buyCourse } from "../services/operations/studentFeaturesAPI"
 import GetAvgRating from "../utils/avgRating"
 import Error from "./Error"
 
+
 function CourseDetails() {
   const { user } = useSelector((state) => state.profile)
   const { token } = useSelector((state) => state.auth)
@@ -62,7 +63,7 @@ function CourseDetails() {
     setIsActive(
       !isActive.includes(id)
         ? isActive.concat([id])
-        : isActive.filter((e) => e != id)
+        : isActive.filter((e) => e !== id)
     )
   }
 
@@ -88,7 +89,7 @@ function CourseDetails() {
   }
 
   const {
-    _id: course_id,
+    
     courseName,
     courseDescription,
     thumbnail,
