@@ -1,31 +1,31 @@
-import React, { useEffect, useState } from 'react'
-import Footer from '../components/common/Footer'
-import { useParams } from 'react-router-dom'
-import { apiConnector } from '../services/apiconnector';
-import { categories } from '../services/apis';
-import { getCatalogPageData } from '../services/operations/pageAndComponentData';
-import Course_Card from '../components/core/Catalog/Course_Card';
-import CourseSlider from '../components/core/Catalog/CourseSlider';
+import React, { useEffect, useState } from "react"
+import Footer from "../components/common/Footer"
+import { useParams } from "react-router-dom"
+import { apiConnector } from "../services/apiconnector"
+import { categories } from "../services/apis"
+import { getCatalogPageData } from "../services/operations/pageAndComponentData"
+import CourseCard from "../components/core/Catalog/Course_Card"
+import CourseSlider from "../components/core/Catalog/CourseSlider"
 import Error from "./Error"
 
 const Catalog = () => {
-
   const { catalogName } = useParams()
   const [active, setActive] = useState(1)
-  const [catalogPageData, setCatalogPageData] = useState(null);
-  const [categoryId, setCategoryId] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [catalogPageData, setCatalogPageData] = useState(null)
+  const [categoryId, setCategoryId] = useState("")
+  const [loading, setLoading] = useState(false)
 
-  //Fetch all categories
+  // Fetch all categories
   useEffect(() => {
     const getCategories = async () => {
       try {
-        setLoading(true);
+        setLoading(true)
 
         const res = await apiConnector("GET", categories.CATEGORIES_API)
 
         const category = res?.data?.data?.find(
-          (ct) => ct.name.split(" ").join("-").toLowerCase() === catalogName
+          (ct) =>
+            ct.name.split(" ").join("-").toLowerCase() === catalogName
         )
 
         setCategoryId(category?._id || "")
@@ -33,34 +33,33 @@ const Catalog = () => {
         console.error("Unable to load catalog categories", error)
         setCategoryId("")
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
     }
 
-    getCategories();
-  }, [catalogName]);
+    getCategories()
+  }, [catalogName])
 
+  // Fetch catalog details
   useEffect(() => {
     const getCategoryDetails = async () => {
       try {
-        setLoading(true);
+        setLoading(true)
 
-        const res = await getCatalogPageData(categoryId);
-        setCatalogPageData(res);
-      }
-      catch (error) {
-        console.log(error)
+        const res = await getCatalogPageData(categoryId)
+        setCatalogPageData(res)
+      } catch (error) {
+        console.error("Unable to load catalog details", error)
+        setCatalogPageData(null)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
     }
 
     if (categoryId) {
-      getCategoryDetails();
+      getCategoryDetails()
     }
-
-  }, [categoryId]);
-
+  }, [categoryId])
 
   if (loading || !catalogPageData) {
     return (
@@ -81,10 +80,10 @@ const Catalog = () => {
   return (
     <>
       {/* Hero Section */}
-      <div className=" box-content bg-richblack-800 px-4">
-        <div className="mx-auto flex min-h-[260px] max-w-maxContentTab flex-col justify-center gap-4 lg:max-w-maxContent ">
+      <div className="box-content bg-richblack-800 px-4">
+        <div className="mx-auto flex min-h-[260px] max-w-maxContentTab flex-col justify-center gap-4 lg:max-w-maxContent">
           <p className="text-sm text-richblack-300">
-            {`Home / Catalog / `}
+            Home / Catalog /{" "}
             <span className="text-yellow-25">
               {catalogPageData?.data?.selectedCategory?.name}
             </span>
@@ -101,29 +100,29 @@ const Catalog = () => {
       </div>
 
       {/* Section 1 */}
-      <div className=" mx-auto box-content w-full max-w-maxContentTab px-4 py-12 lg:max-w-maxContent">
+      <div className="mx-auto box-content w-full max-w-maxContentTab px-4 py-12 lg:max-w-maxContent">
         <div className="section_heading">
           Courses to get you started
         </div>
 
         <div className="my-4 flex border-b border-b-richblack-600 text-sm">
           <p
-            className={`px-4 py-2 ${
+            className={`cursor-pointer px-4 py-2 ${
               active === 1
                 ? "border-b border-b-yellow-25 text-yellow-25"
                 : "text-richblack-50"
-            } cursor-pointer`}
+            }`}
             onClick={() => setActive(1)}
           >
-            Most Populer
+            Most Popular
           </p>
 
           <p
-            className={`px-4 py-2 ${
+            className={`cursor-pointer px-4 py-2 ${
               active === 2
                 ? "border-b border-b-yellow-25 text-yellow-25"
                 : "text-richblack-50"
-            } cursor-pointer`}
+            }`}
             onClick={() => setActive(2)}
           >
             New
@@ -138,9 +137,10 @@ const Catalog = () => {
       </div>
 
       {/* Section 2 */}
-      <div className=" mx-auto box-content w-full max-w-maxContentTab px-4 py-12 lg:max-w-maxContent">
+      <div className="mx-auto box-content w-full max-w-maxContentTab px-4 py-12 lg:max-w-maxContent">
         <div className="section_heading">
-          Top courses in {catalogPageData?.data?.differentCategory?.name}
+          Top courses in{" "}
+          {catalogPageData?.data?.differentCategory?.name}
         </div>
 
         <div className="py-8">
@@ -151,20 +151,18 @@ const Catalog = () => {
       </div>
 
       {/* Section 3 */}
-      <div className=" mx-auto box-content w-full max-w-maxContentTab px-4 py-12 lg:max-w-maxContent">
-        <div className="section_heading">
-          Frequently Bought
-        </div>
+      <div className="mx-auto box-content w-full max-w-maxContentTab px-4 py-12 lg:max-w-maxContent">
+        <div className="section_heading">Frequently Bought</div>
 
         <div className="py-8">
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             {catalogPageData?.data?.mostSellingCourses
               ?.slice(0, 4)
               .map((course, i) => (
-                <Course_Card
+                <CourseCard
                   course={course}
                   key={i}
-                  Height={"h-[400px]"}
+                  Height="h-[400px]"
                 />
               ))}
           </div>
